@@ -1,0 +1,5 @@
+{{#vendorExtensions.x-dart-additional-imports}}
+{{^isPartOfSameModule}}
+import 'package:{{pubName}}/model/{{.}}.dart';
+{{/isPartOfSameModule}}
+{{/vendorExtensions.x-dart-additional-imports}}

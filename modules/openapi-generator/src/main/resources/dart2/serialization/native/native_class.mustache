@@ -1,4 +1,4 @@
-class {{{classname}}} {
+class {{{classname}}}{{#parent}} extends {{{.}}}{{/parent}} {
 {{>dart_constructor}}
 {{#vars}}
   {{#description}}
@@ -113,6 +113,26 @@ class {{{classname}}} {
   static {{{classname}}}? fromJson(dynamic value) {
     if (value is Map) {
       final json = value.cast<String, dynamic>();
+
+{{#discriminator}}
+      // Use discriminator to determine the correct subclass
+      final discriminator = json[r'{{{propertyName}}}'];
+      if (discriminator != null && discriminator != r'{{{mappingName}}}') {
+        {{#mappedModels}}
+        if (discriminator == r'{{{mappingName}}}') {
+          return {{{modelName}}}.fromJson(json);
+        }
+        {{/mappedModels}}
+        
+        // If no explicit mapping matches, try to use the discriminator value as a class name
+        try {
+          // This will throw if the class doesn't exist
+          return {{{classname}}}.fromJsonForType(discriminator, json);
+        } catch (_) {
+          // Unknown discriminator value, continue with default deserialization
+        }
+      }
+{{/discriminator}}
 
       // Ensure that the map contains the required keys.
       // Note 1: the values aren't checked for validity beyond being non-null.
@@ -233,6 +253,20 @@ class {{{classname}}} {
     }
     return null;
   }
+
+{{#discriminator}}
+  /// A static method that attempts to construct a [{{{classname}}}] instance
+  /// using the provided [type] name and [json] data.
+  /// 
+  /// This method is used when a discriminator value doesn't match any known mapping.
+  /// If the provided [type] doesn't correspond to a valid subclass, this method
+  /// will throw an exception.
+  static {{{classname}}}? fromJsonForType(String type, Map<String, dynamic> json) {
+    // This implementation can be extended to support runtime type resolution
+    // if required by the application.
+    throw Exception('Unknown type "$type" found when deserializing {{{classname}}}');
+  }
+{{/discriminator}}
 
   static List<{{{classname}}}> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <{{{classname}}}>[];

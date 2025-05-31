@@ -1,0 +1,5 @@
+Run
+ ./mvnw clean install -DskipTests -Dmaven.javadoc.skip=true
+
+to test that changes to .java files compile. If no *compilation* errors then run:
+  java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generate -i ./samples/openapi3/schema/polymorphism/schema.yaml -g dart -o ./_polymorphism_example --additional-properties=pubLibrary=flutter_common_openapi,pubName=flutter_common_openapi --openapi-normalizer REF_AS_PARENT_IN_ALLOF=true,REMOVE_ANYOF_ONEOF_AND_KEEP_PROPERTIES_ONLY=true

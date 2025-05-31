@@ -1,0 +1,64 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  description: API description in Markdown.
+  version: 1.0.0
+paths:
+  /animals:
+    get:
+      summary: Returns all animals.
+      description: Optional extended description in Markdown.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Animal'
+
+components:
+  schemas:
+    Animal:   # An example of a base class
+      type: object
+      discriminator:
+        propertyName: className  # Use the "className" field to find deserializer
+        mapping:
+          Cat: '#/components/schemas/Cat'
+          Dog: '#/components/schemas/Dog'
+      oneOf:  # Both mapping and oneOf needed?
+        - '#/components/schemas/Cat'
+        - '#/components/schemas/Dog'
+      properties:
+        className:
+          type: string
+          default: "Animal"
+        color:
+          type: string
+          default: red
+
+    Dog:
+      allOf:
+        - $ref: '#/components/schemas/Animal'
+        - type: object
+          properties:
+            className:
+              type: string
+              default: "Dog"
+            breed:
+                type: string
+    Cat:
+      allOf:
+        - $ref: '#/components/schemas/Animal'  # My superclass
+        - type: object
+          properties:
+            className:
+              type: string
+              default: "Cat"
+            whiskers:
+                type: number
+
+    Store:
+      type: object
+      properties:
+        pet:      # Polymorphic property
+          $ref: "#/components/schemas/Animal"
