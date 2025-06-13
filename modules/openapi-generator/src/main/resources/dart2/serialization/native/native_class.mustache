@@ -116,7 +116,7 @@ class {{{classname}}}{{#parent}} extends {{{.}}}{{/parent}} {
 
 {{#discriminator}}
       // Use discriminator to determine the correct subclass
-      final discriminator = json[r'{{{propertyName}}}'];
+      final discriminator = json[r'{{{propertyBaseName}}}'];
       if (discriminator != null && discriminator != r'{{{mappingName}}}') {
         {{#mappedModels}}
         if (discriminator == r'{{{mappingName}}}') {
